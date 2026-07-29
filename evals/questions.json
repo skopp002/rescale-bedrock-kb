@@ -145,6 +145,42 @@
       "expected_keywords": ["Next", "browser"],
       "chapter": "Getting Started",
       "kind": "text"
+    },
+    {
+      "id": "q17-region-objects-diagram",
+      "question": "According to the Geometry Objects diagram for a multi-region simulation, what are parts-based interfaces shown with, and what do regions contain?",
+      "expected_pages": [[100, 189]],
+      "reference_answer": "The Geometry Objects diagram shows two regions (region 1 in green/teal and region 2 in orange/amber) side by side. Named faces for inflow are on the left edge and named faces for outflow on the right edge. Part/part contacts are shown with vertical dashed lines between the regions, where each part/part combination generates one part contact. Parts-based interfaces are shown with horizontal solid lines at the bottom, indicating that regions contain multiple parts. An inflow boundary is on the left and an outflow boundary is on the right.",
+      "expected_keywords": ["parts-based interfaces", "regions", "part contact", "inflow", "outflow"],
+      "chapter": "Getting Started",
+      "kind": "figure"
+    },
+    {
+      "id": "q18-multiple-physics-continua",
+      "question": "In the multiple physics continua engineering example, how is thermal data exchanged between the two physics continua, and what boundaries does each continuum have?",
+      "expected_pages": [[100, 189]],
+      "reference_answer": "The engineering example diagram shows gas flowing in from the left through a solid wall (shown in brown/orange at the top). Inside, there is a fast response region (teal/green, left) and a slow response region (teal/green, right), with gas out at the top. The Geometry Objects diagram below shows two physics continua as dashed-line boxes. Physics continuum 1 (top) has thermal boundaries on the left and named faces for mapping surfaces connecting to physics continuum 2 (bottom). Physics continuum 2 has inflow boundaries on the left and inflow boundaries at the bottom. Thermal data exchange between surfaces occurs through the named faces for mapping surfaces that bridge the two continua.",
+      "expected_keywords": ["thermal data exchange", "named faces for mapping surfaces", "physics continuum", "solid wall", "fast response", "slow response"],
+      "chapter": "Getting Started",
+      "kind": "figure"
+    },
+    {
+      "id": "q19-surrogate-fit-plot",
+      "question": "What does the Least Squares surrogate fit plot show, and what does the reference line y=x indicate?",
+      "expected_pages": [[7763, 7997]],
+      "reference_answer": "The surrogate fit plot is a scatter plot with red circular data points and a blue diagonal reference line (y=x). The R2 value is 0.958267, displayed at the top left. The X-axis shows 'Predicted - Surrogate (bar)' and the Y-axis shows 'SA Total Pressure Inlet1 (bar)'. The reference line y=x gives an indication of how close predicted response values from the bottom axis match the actual response values from the left vertical axis. Points closer to the line indicate better surrogate accuracy.",
+      "expected_keywords": ["R2", "0.958267", "y=x", "predicted", "actual"],
+      "chapter": "Design Manager",
+      "kind": "figure"
+    },
+    {
+      "id": "q20-cross-validation-residual",
+      "question": "What does the cross validation residual plot show, and what does the marked annotation in the residual table represent?",
+      "expected_pages": [[7763, 7997]],
+      "reference_answer": "The cross validation residual plot shows red circular data points scattered around a green horizontal zero reference line. The X-axis is 'SA Total Pressure Inlet1 (bar)' and the Y-axis is 'Cross Validation Residuals - Surrogate_SA_Total_Pressure_Inlet1'. Small residual values tightly scattered around the zero reference line indicate good prediction accuracy of the surrogate. The marked annotation in the residual table is the root mean square (RMS) of all cross validation residuals in the Cross V Residual column — the lower the value, the better the fit.",
+      "expected_keywords": ["residual", "RMS", "cross validation", "zero reference line"],
+      "chapter": "Design Manager",
+      "kind": "figure"
     }
   ]
 }
