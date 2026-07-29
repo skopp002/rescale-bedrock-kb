@@ -1,0 +1,150 @@
+{
+  "corpus": "userguide_20.06.007_en.pdf (Simcenter STAR-CCM+ 2510 User Guide)",
+  "notes": "Ground truth authored by reading the split PDFs directly. expected_pages are 1-based inclusive page ranges in the original 14,125-page guide, matching the start_page/end_page metadata attached at upload. Every question is answerable from the subset chapters that are actually ingested.",
+  "questions": [
+    {
+      "id": "q01-client-cmdline",
+      "question": "What command launches a Simcenter STAR-CCM+ client that connects to a server running on host scorpion at port 47828?",
+      "expected_pages": [[1310, 1468]],
+      "reference_answer": "Use `starccm+ -host scorpion:47828`. When STAR-CCM+ starts a server it prints the hostname and port in the Output window in exactly the form the launch command needs, so the value can be copied straight into the -host argument.",
+      "expected_keywords": ["starccm+", "-host", "47828"],
+      "chapter": "Client-Server Setup",
+      "kind": "text"
+    },
+    {
+      "id": "q02-disconnect-client",
+      "question": "How do I disconnect a client from its server without stopping either process?",
+      "expected_pages": [[1310, 1468]],
+      "reference_answer": "Make sure the correct simulation window is active in the STAR-CCM+ workspace, then select File > Disconnect. This disconnects the client from the server while both processes keep running.",
+      "expected_keywords": ["File", "Disconnect"],
+      "chapter": "Client-Server Setup",
+      "kind": "text"
+    },
+    {
+      "id": "q03-arm64-gui",
+      "question": "Is the Simcenter STAR-CCM+ graphical user interface officially supported on Linux ARM64?",
+      "expected_pages": [[1310, 1468]],
+      "reference_answer": "No. On Linux ARM64, STAR-CCM+ is supported for running simulations in batch mode only; the GUI is not officially supported in this release.",
+      "expected_keywords": ["batch", "not", "supported"],
+      "chapter": "Client-Server Setup",
+      "kind": "text"
+    },
+    {
+      "id": "q04-arm64-isa",
+      "question": "Which instruction set architecture must an ARM chip implement to run Simcenter STAR-CCM+?",
+      "expected_pages": [[1310, 1468]],
+      "reference_answer": "The chip must implement the ARMv8.2-A instruction set architecture with support for the AArch64 / ARM64 64-bit extension.",
+      "expected_keywords": ["ARMv8.2-A"],
+      "chapter": "Client-Server Setup",
+      "kind": "text"
+    },
+    {
+      "id": "q05-viewer-licensing",
+      "question": "Does Simcenter STAR-CCM+ Viewer require a license?",
+      "expected_pages": [[13725, 13756]],
+      "reference_answer": "No. No licensing is required for STAR-CCM+ Viewer, so it can be used to view the results of STAR-CCM+ simulations without purchasing the software. It ships among the components selected by default in the Windows and Linux 64-bit installation, and is also downloadable as a separate installable package.",
+      "expected_keywords": ["no", "licens"],
+      "chapter": "Simcenter STAR-CCM+ Viewer",
+      "kind": "text"
+    },
+    {
+      "id": "q06-viewer-start-windows",
+      "question": "How do I start Simcenter STAR-CCM+ Viewer on Windows?",
+      "expected_pages": [[13725, 13756]],
+      "reference_answer": "From the Windows Start menu, select the Simcenter STAR-CCM+ Viewer item in the Siemens Simcenter STAR-CCM+ submenu. In earlier versions this was called Simcenter STAR-View+. If Viewer was installed as a standalone product it has its own submenu.",
+      "expected_keywords": ["Start menu"],
+      "chapter": "Simcenter STAR-CCM+ Viewer",
+      "kind": "text"
+    },
+    {
+      "id": "q07-pep-optout",
+      "question": "How do I withdraw consent for data processing under the Product Excellence Program?",
+      "expected_pages": [[100, 189], [13757, 13779]],
+      "reference_answer": "Set ProductExcellenceProgram=0. For STAR-CCM+ this goes in the sitesettings.props file in the star/config folder of the installation; for STAR-CCM+ Virtual Reality and STAR-CCM+ Viewer it goes in the StarviewSiteSettings.props file. Setting the value to 1 consents to the data collection.",
+      "expected_keywords": ["ProductExcellenceProgram", "0"],
+      "chapter": "Getting Started",
+      "kind": "text"
+    },
+    {
+      "id": "q08-help-search-boolean",
+      "question": "When I type several words into the installed help search box, how are they combined?",
+      "expected_pages": [[100, 189]],
+      "reference_answer": "All search words and phrases have an implicit boolean AND between them, so a page must contain all of the terms to match. The universal search on the Support Center is noted as significantly more powerful than the installed help's own search.",
+      "expected_keywords": ["AND"],
+      "chapter": "Getting Started",
+      "kind": "text"
+    },
+    {
+      "id": "q09-simulation-categories",
+      "question": "What should I decide before starting a simulation project, and how do I choose a layout for best performance?",
+      "expected_pages": [[100, 189]],
+      "reference_answer": "Decide how many regions the engineering scenario requires and how those regions connect; some scenarios are better served by two simulations linked through the co-simulation framework. Prepare a sketch identifying the materials, physics, and conditions in the real situation, then match it to a similar engineering example. As a general rule for optimal performance, choose the layout that minimises the number of regions, boundaries, and interfaces.",
+      "expected_keywords": ["regions", "minimis"],
+      "chapter": "Getting Started",
+      "kind": "text"
+    },
+    {
+      "id": "q10-global-parameters",
+      "question": "What kinds of values can Design Manager control through global parameters?",
+      "expected_pages": [[7763, 7997]],
+      "reference_answer": "Global parameters let Design Manager control scalar, vector, and file path parameters, including mesh values such as base size, region physics values such as volumetric heat sources, boundary physics values such as inlet velocities or turbulence and thermal scalars, motion parameters such as rotation rates or translation velocities, and part replacement (swapping parts or assemblies in a design exploration).",
+      "expected_keywords": ["base size", "parameter"],
+      "chapter": "Design Manager",
+      "kind": "text"
+    },
+    {
+      "id": "q11-mesh-reuse",
+      "question": "What conditions must designs satisfy for Design Manager to reuse a mesh from a previous design?",
+      "expected_pages": [[7763, 7997]],
+      "reference_answer": "The designs must be from a qualifying study type and must share the same Geometry and Meshing parameters. When those conditions hold, a qualifying design only needs to run the Solver Block and Result Block, because it can reuse the mesh from a previous design — Design Manager retrieves that mesh before running the later design.",
+      "expected_keywords": ["Geometry", "Meshing"],
+      "chapter": "Design Manager",
+      "kind": "text"
+    },
+    {
+      "id": "q12-pie-chart",
+      "question": "What does a Design Manager pie chart show, and how do I create one?",
+      "expected_pages": [[7763, 7997]],
+      "reference_answer": "A pie chart gives a view of design feasibility for a design study, both during and after the run — a qualitative overview of how well the study output fits the constraints, responses, and bounding parameters set during the run. To create one where the design study is not yet selected, right-click the Plots node and select New Plot > Pie Chart; the recommended route to a pre-populated chart is the Creating Design Plots workflow.",
+      "expected_keywords": ["feasibility", "Pie Chart"],
+      "chapter": "Design Manager",
+      "kind": "text"
+    },
+    {
+      "id": "q13-adjoint-cost-function",
+      "question": "Which Design Manager study type requires responses associated with an adjoint cost function, and how do I verify the requirement is met?",
+      "expected_pages": [[7763, 7997]],
+      "reference_answer": "An adjoint-based design study requires responses associated with an adjoint cost function. To verify the requirement, check whether the Adjoint Cost Function property is activated.",
+      "expected_keywords": ["Adjoint Cost Function"],
+      "chapter": "Design Manager",
+      "kind": "text"
+    },
+    {
+      "id": "q14-vr-console-install",
+      "question": "What command-line option installs Simcenter STAR-CCM+ Virtual Reality in console mode, and how do I choose a different install location?",
+      "expected_pages": [[13757, 13779]],
+      "reference_answer": "Use `-i console` to run the installer in console mode, which installs with default settings and shows output in the console window; you must still accept the license agreement and choose the install location there. Use `-DINSTALLDIR=<path>` to provide an alternative installation location.",
+      "expected_keywords": ["-i console", "INSTALLDIR"],
+      "chapter": "Simcenter STAR-CCM+ Virtual Reality",
+      "kind": "text"
+    },
+    {
+      "id": "q15-vr-workflow",
+      "question": "What are the steps to visualize results in Simcenter STAR-CCM+ Virtual Reality?",
+      "expected_pages": [[13757, 13779]],
+      "reference_answer": "Prepare scenes in Simcenter STAR-CCM+, then launch Simcenter STAR-CCM+ Virtual Reality. There are two modes of use, so some steps of the general procedure differ, but once you enter the virtual environment for a scene all operations are the same.",
+      "expected_keywords": ["scenes", "launch"],
+      "chapter": "Simcenter STAR-CCM+ Virtual Reality",
+      "kind": "text"
+    },
+    {
+      "id": "q16-help-navigation",
+      "question": "In the online Help, how do I move to the next page, and how is that different from the browser's Next button?",
+      "expected_pages": [[100, 189]],
+      "reference_answer": "Click the Next button within the online Help to move to the next Help page, and Previous to move to the preceding one. These are not the same as the browser's Next and Back buttons.",
+      "expected_keywords": ["Next", "browser"],
+      "chapter": "Getting Started",
+      "kind": "text"
+    }
+  ]
+}

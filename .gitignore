@@ -1,0 +1,20 @@
+# Data directory
+data/
+
+# Virtual environment
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Env / secrets
+.env
+
+# Generated resource IDs from `kb provision`. Local state, not source: it embeds
+# the AWS account id in bucket names and role ARNs, and is rebuilt by re-running
+# provision (which is idempotent and reuses whatever already exists).
+.kb-state.json

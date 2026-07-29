@@ -1,0 +1,155 @@
+# Single source of truth for the whole project.
+#
+# There are NO defaults anywhere in the code. Every key below is required, and a
+# missing or empty value raises a ConfigError at import time rather than
+# silently falling back to something plausible. That means an experiment can
+# never run under settings you didn't state here.
+#
+# Paths are relative to the repository root.
+
+aws:
+  # Region for everything except experiments that override it explicitly.
+  primary_region: us-west-2
+  # Leave account_id null to resolve it via STS at runtime. It is the one value
+  # allowed to be null, because it is discoverable and must match the caller.
+  account_id: null
+  # Prefix for every bucket, role, knowledge base, and index this project owns.
+  project_prefix: starccm-kb
+
+# Cost-attribution tags, applied to every resource this project creates that
+# supports tagging. Re-running `provision` tags resources that already exist, so
+# adding a key here propagates on the next run.
+#
+# Two limits worth knowing before reading these in Cost Explorer:
+#   - Bedrock *model invocation* (FM parsing, embedding, generation, judging)
+#     bills as account-level model usage, not against the tagged knowledge base,
+#     so the largest cost in this project is NOT captured by these tags.
+#   - A tag only reaches Cost Explorer after being activated as a cost
+#     allocation tag in the payer account's Billing console. That is a manual,
+#     one-time step with no API in this project.
+tags:
+  project_name: rescale-kb-evals
+
+paths:
+  data_dir: data
+  source_pdf: data/userguide_20.06.007_en.pdf
+  split_dir: data/split
+  eval_questions: evals/questions.json
+  results_dir: results
+  state_file: .kb-state.json
+  # S3 key prefix the data sources are scoped to (inclusionPrefixes).
+  corpus_prefix: corpus/
+  manifest_name: manifest.json
+
+corpus:
+  # Chapters (matched case-insensitively as substrings of the PDF outline title)
+  # written and uploaded when subset mode is on.
+  subset_chapters:
+    - Getting Started
+    - Client-Server Setup
+    - Design Manager
+    - Simcenter STAR-CCM+ Viewer
+    - Simcenter STAR-CCM+ Virtual Reality
+  # Chapters longer than this are divided into equal parts. Keeps every object
+  # well under the 50 MB Bedrock KB per-file ingestion limit.
+  max_pages_per_part: 300
+
+chunking:
+  # Applied to the self-managed (VECTOR) knowledge bases only. A MANAGED
+  # knowledge base chooses its own chunking and ignores these.
+  strategy: FIXED_SIZE
+  max_tokens: 512
+  overlap_percentage: 20
+
+models:
+  # Foundation-model parser. FM parsing bills on input/output tokens (only
+  # Bedrock Data Automation is per-page), so the cheapest vision-capable model
+  # is the economical choice. nova-lite is the one current vision model in
+  # us-west-2 that still supports ON_DEMAND invocation -- newer ones are
+  # INFERENCE_PROFILE-only and need a profile ARN instead.
+  fm_parser: amazon.nova-lite-v1:0
+  # Answers questions from retrieved context.
+  generation: us.anthropic.claude-haiku-4-5-20251001-v1:0
+  # Grades generated answers against the reference answers. Deliberately a
+  # different, stronger model than `generation` -- a model must not grade its own
+  # output, because the errors it makes are exactly the ones it can't see. The
+  # grading is also anchored to a human-written reference answer, so the judge is
+  # comparing two texts rather than deciding what is true on its own.
+  judge: us.anthropic.claude-sonnet-5
+
+# Inference parameters per role. `temperature: null` omits the parameter from the
+# Converse call entirely -- Claude 4.6-and-later models reject it as deprecated,
+# and those models are already deterministic enough for grading.
+inference:
+  generation:
+    max_tokens: 800
+    temperature: 0.0
+  judge:
+    max_tokens: 400
+    temperature: null
+  # The FM parser is invoked by Bedrock, not by us, so it has no entry here.
+
+retrieval:
+  top_k: 5
+  # S3 Vectors caps *filterable* metadata at 2 KB per vector (40 KB total).
+  # Bedrock writes the chunk text under AMAZON_BEDROCK_TEXT and a JSON blob of
+  # the document's own metadata under AMAZON_BEDROCK_METADATA; both blow that cap
+  # unless declared non-filterable. Our sidecar attributes (chapter, pages) stay
+  # filterable, which is what makes --chapter / --page-from work.
+  non_filterable_metadata_keys:
+    - AMAZON_BEDROCK_TEXT
+    - AMAZON_BEDROCK_METADATA
+  distance_metric: cosine
+
+# Which experiments run when no keys are passed on the command line.
+default_experiments:
+  - titan
+  - managed
+
+experiments:
+  titan:
+    label: Bedrock KB / Titan v2 text + FM parser
+    kb_type: VECTOR
+    region: us-west-2
+    embedding_model: amazon.titan-embed-text-v2:0
+    embedding_dims: 1024
+    embedding_data_type: FLOAT32
+    parsing_strategy: BEDROCK_FOUNDATION_MODEL
+    parsing_modality: MULTIMODAL
+    uses_s3_vectors: true
+    notes: >-
+      Baseline. Text-only embeddings; figures reach the index only as
+      parser-written text.
+
+  nova:
+    label: Bedrock KB / Nova 2 multimodal embed + FM parser
+    kb_type: VECTOR
+    # Pinned: amazon.nova-2-multimodal-embeddings-v1:0 exists only here.
+    region: us-east-1
+    embedding_model: amazon.nova-2-multimodal-embeddings-v1:0
+    embedding_dims: 1024
+    embedding_data_type: FLOAT32
+    parsing_strategy: BEDROCK_FOUNDATION_MODEL
+    parsing_modality: MULTIMODAL
+    uses_s3_vectors: true
+    notes: >-
+      Nova multimodal embeddings are us-east-1 only, hence the separate region
+      and corpus bucket.
+
+  managed:
+    label: Bedrock Managed KB (AWS-managed embed + Smart Parsing)
+    kb_type: MANAGED
+    region: us-west-2
+    # AWS selects and manages the embedder, so no model or dimensions here.
+    embedding_model: null
+    embedding_dims: null
+    embedding_data_type: null
+    parsing_strategy: SMART_PARSING
+    parsing_modality: null
+    uses_s3_vectors: false
+    # Only "1" is currently accepted by the managed S3 connector.
+    connector_version: "1"
+    image_extraction: ENABLED
+    notes: >-
+      AWS selects the embedding model, chunking, and parser. No customer vector
+      store. Supports Retrieve but not RetrieveAndGenerate.

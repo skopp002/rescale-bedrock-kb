@@ -1,0 +1,425 @@
+{
+  "experiment": "managed",
+  "label": "Bedrock Managed KB (AWS-managed embed + Smart Parsing)",
+  "region": "us-west-2",
+  "top_k": 5,
+  "aggregate": {
+    "questions": 16,
+    "recall@5": 1.0,
+    "precision@5": 0.85,
+    "mrr": 0.9688,
+    "hit@1": 0.9375,
+    "retrieve_latency_ms_p50": 808.2,
+    "answer_correctness": 0.7917,
+    "keyword_coverage": 1.0,
+    "citation_precision": 1.0,
+    "rag_latency_ms_p50": 2797.6
+  },
+  "recall_by_kind": {
+    "text": 1.0
+  },
+  "retrieval": [
+    {
+      "question_id": "q01-client-cmdline",
+      "hits": [
+        true,
+        true,
+        false,
+        false,
+        true
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.6,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 1074.8820409935433,
+      "top_citation": "Client-Server Setup (guide pp. 1310-1468)"
+    },
+    {
+      "question_id": "q02-disconnect-client",
+      "hits": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 872.4198749987409,
+      "top_citation": "Client-Server Setup (guide pp. 1310-1468)"
+    },
+    {
+      "question_id": "q03-arm64-gui",
+      "hits": [
+        true,
+        true,
+        false,
+        false,
+        false
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 833.7030830007279,
+      "top_citation": "Client-Server Setup (guide pp. 1310-1468)"
+    },
+    {
+      "question_id": "q04-arm64-isa",
+      "hits": [
+        true,
+        true,
+        true,
+        false,
+        false
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.6,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 856.1386250003125,
+      "top_citation": "Client-Server Setup (guide pp. 1310-1468)"
+    },
+    {
+      "question_id": "q05-viewer-licensing",
+      "hits": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 896.9191249998403,
+      "top_citation": "Simcenter STAR-CCM+ Viewer (guide pp. 13725-13756)"
+    },
+    {
+      "question_id": "q06-viewer-start-windows",
+      "hits": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 728.5230830020737,
+      "top_citation": "Simcenter STAR-CCM+ Viewer (guide pp. 13725-13756)"
+    },
+    {
+      "question_id": "q07-pep-optout",
+      "hits": [
+        false,
+        true,
+        true,
+        true,
+        false
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.6,
+      "reciprocal_rank": 0.5,
+      "hit_at_1": false,
+      "latency_ms": 851.29083400534,
+      "top_citation": "Simcenter STAR-CCM+ Viewer (guide pp. 13725-13756)"
+    },
+    {
+      "question_id": "q08-help-search-boolean",
+      "hits": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 821.4595410026959,
+      "top_citation": "Getting Started (guide pp. 100-189)"
+    },
+    {
+      "question_id": "q09-simulation-categories",
+      "hits": [
+        true,
+        true,
+        false,
+        false,
+        false
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 795.0200000050245,
+      "top_citation": "Getting Started (guide pp. 100-189)"
+    },
+    {
+      "question_id": "q10-global-parameters",
+      "hits": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 730.7390420028241,
+      "top_citation": "Design Manager (guide pp. 7763-7997)"
+    },
+    {
+      "question_id": "q11-mesh-reuse",
+      "hits": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 600.3145420036162,
+      "top_citation": "Design Manager (guide pp. 7763-7997)"
+    },
+    {
+      "question_id": "q12-pie-chart",
+      "hits": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 790.6189169952995,
+      "top_citation": "Design Manager (guide pp. 7763-7997)"
+    },
+    {
+      "question_id": "q13-adjoint-cost-function",
+      "hits": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 860.0636670016684,
+      "top_citation": "Design Manager (guide pp. 7763-7997)"
+    },
+    {
+      "question_id": "q14-vr-console-install",
+      "hits": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 752.7872499995283,
+      "top_citation": "Simcenter STAR-CCM+ Virtual Reality (guide pp. 13757-13779)"
+    },
+    {
+      "question_id": "q15-vr-workflow",
+      "hits": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 740.5948330051615,
+      "top_citation": "Simcenter STAR-CCM+ Virtual Reality (guide pp. 13757-13779)"
+    },
+    {
+      "question_id": "q16-help-navigation",
+      "hits": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "reciprocal_rank": 1.0,
+      "hit_at_1": true,
+      "latency_ms": 737.8619170049205,
+      "top_citation": "Getting Started (guide pp. 100-189)"
+    }
+  ],
+  "answers": [
+    {
+      "question_id": "q01-client-cmdline",
+      "judge_score": 3,
+      "judge_reason": "The system answer provides the exact correct command matching the reference.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 2201.29441699828,
+      "answer_text": "According to excerpt [1], the command to launch a client that connects to a server running on host scorpion at port 47828 is:\n\n```\nstarccm+ -host scorpion:47828\n```"
+    },
+    {
+      "question_id": "q02-disconnect-client",
+      "judge_score": 3,
+      "judge_reason": "The system answer correctly captures the core steps (activate simulation window, File > Disconnect) and the key outcome (client detaches while both processes keep running), matching the reference with only added plausible elaboration.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 2801.304959000845,
+      "answer_text": "According to the excerpts, to disconnect a client from its server without stopping either process:\n\n1. Within the Simcenter STAR-CCM+ workspace, make sure that the correct simulation window is active.\n2. Select **File > Disconnect**.\n\nThis action disconnects the client from the server while both processes continue running. You will no longer see the simulation window in the client, but the server continues to run. You can then close the client workspace after disconnecting, and the server will remain active. You can reconnect to the server later if needed."
+    },
+    {
+      "question_id": "q03-arm64-gui",
+      "judge_score": 3,
+      "judge_reason": "System answer matches the reference exactly, confirming GUI is not officially supported on Linux ARM64 while batch mode is.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 2139.2502500020782,
+      "answer_text": "No, the graphical user interface (GUI) is not officially supported on Linux ARM64. According to the excerpts, \"Simcenter STAR-CCM+ is supported on Linux ARM64 for running simulations in batch mode. The graphical user interface (GUI) is not officially supported in this release.\""
+    },
+    {
+      "question_id": "q04-arm64-isa",
+      "judge_score": 3,
+      "judge_reason": "System answer matches the reference exactly in substance, correctly stating ARMv8.2-A with AArch64/ARM64 64-bit extension support.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 2067.65075000294,
+      "answer_text": "According to the excerpts, an ARM chip must implement the **ARMv8.2-A instruction set architecture** with support for the **AArch64 or ARM64 64-bit extension** to run Simcenter STAR-CCM+."
+    },
+    {
+      "question_id": "q05-viewer-licensing",
+      "judge_score": 2,
+      "judge_reason": "Correctly states no license is required and matches the core rationale, but omits the secondary detail about default installation and separate downloadable package.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 2793.914000001678,
+      "answer_text": "No, Simcenter STAR-CCM+ Viewer does not require a license. According to the excerpts, it is described as \"license-free\" and \"as no licensing is required for Simcenter STAR-CCM+ Viewer, it is possible to use it for viewing the results of Simcenter STAR-CCM+ simulations without needing to purchase the software.\""
+    },
+    {
+      "question_id": "q06-viewer-start-windows",
+      "judge_score": 2,
+      "judge_reason": "The system answer correctly describes starting Viewer from the Start menu and the standalone submenu note, but omits the secondary detail about it formerly being called Simcenter STAR-View+.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 2534.820375003619,
+      "answer_text": "According to the excerpts, to start Simcenter STAR-CCM+ Viewer on Windows:\n\nOn the Start menu, launch Simcenter STAR-CCM+ Viewer by selecting its menu item in the Siemens Simcenter STAR-CCM+ submenu. (If you installed Simcenter STAR-CCM+ Viewer as a standalone product, then it has its own submenu.)"
+    },
+    {
+      "question_id": "q07-pep-optout",
+      "judge_score": 2,
+      "judge_reason": "Core instructions match the reference, but the system adds an unverified detail (bin\\config folder location) not confirmed in the reference, which only specifies the file name without folder path for StarviewSiteSettings.props.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 2540.336833000765,
+      "answer_text": "According to the excerpts, to withdraw consent for data processing under the Product Excellence Program, you need to set `ProductExcellenceProgram=0` in the appropriate settings file:\n\n- **For Simcenter STAR-CCM+**: Set `ProductExcellenceProgram=0` in the `sitesettings.props` file, which can be found in your installation folder in the `star\\config` folder.\n\n- **For Simcenter STAR-CCM+ Virtual Reality and Simcenter STAR-CCM+ Viewer**: Set `ProductExcellenceProgram=0` in the `StarviewSiteSettings.props` file, which can be found in your installation folder in the `bin\\config` folder."
+    },
+    {
+      "question_id": "q08-help-search-boolean",
+      "judge_score": 2,
+      "judge_reason": "Correctly explains the implicit AND behavior but omits the secondary note about the Support Center's more powerful universal search.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 3025.9262079998734,
+      "answer_text": "According to the excerpts, when you type several words into the installed help search box, they are combined with an implicit boolean AND between them. This means that a page must contain **all** of the words you entered in order to appear in the search results.\n\nAs stated in excerpt [1]: \"All search words and phrases have an implicit boolean AND between them (meaning that a page must contain all the words and phrases in the search box).\""
+    },
+    {
+      "question_id": "q09-simulation-categories",
+      "judge_score": 3,
+      "judge_reason": "The system answer covers all key points: deciding on regions and connections, considering co-simulation for some scenarios, sketching materials/physics/conditions, matching to engineering examples, and minimizing regions/boundaries/interfaces for performance.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 4030.269667004177,
+      "answer_text": "Based on the excerpts provided, before starting a simulation project in Simcenter STAR-CCM+, you should:\n\n1. **Decide how many regions you require** to simulate the engineering scenario and how those regions connect.\n\n2. **Prepare a sketch** that identifies the materials, physics, and conditions present in the real situation.\n\n3. **Scan the engineering examples** to identify one similar to your analysis.\n\n**To choose a layout for best performance:**\n\nAs a general rule for optimal performance, **choose the layout that minimises the number of regions, boundaries, and interfaces in the simulation.**\n\nThe excerpts also note that for some scenarios, you may be best served by having two simulations that connect through the co-simulation framework."
+    },
+    {
+      "question_id": "q10-global-parameters",
+      "judge_score": 2,
+      "judge_reason": "The system answer captures all the key examples (mesh, region/boundary physics, motion, part replacement) but miscategorizes them by treating scalar/vector/file path as separate types from motion/physical quantities, adding a slightly inaccurate structure not in the reference.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 4008.475292001094,
+      "answer_text": "According to the excerpts, Design Manager can control the following kinds of values through global parameters:\n\n1. **Scalar parameters** - such as mesh values (e.g., base size) and region physics values (e.g., volumetric heat sources)\n\n2. **Vector parameters** - such as boundary physics values (e.g., inlet velocities, turbulence scalars, or thermal scalars)\n\n3. **File path parameters** - for part replacement (replacing parts or assemblies in a design exploration)\n\n4. **Motion parameters** - such as rotation rates or translation velocities\n\n5. **Physical quantities** - such as flow inlet velocity\n\nAs stated in the excerpts: \"Using global parameters, you can instruct Design Manager to control various scalar, vector and file path parameters, for example: Mesh values-such as the base size Region physics values-such as volumetric heat sources Boundary physics values-such as inlet velocities, turbulence scalars, or thermal scalars Motion parameters-such as rotation rates or translation velocities Part replacement-replacing parts or assemblies in a design exploration\""
+    },
+    {
+      "question_id": "q11-mesh-reuse",
+      "judge_score": 3,
+      "judge_reason": "The system answer captures both required conditions (same Geometry/Meshing parameters and qualifying study type) and adds accurate specifics about which study types qualify, matching the reference's substance.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 3306.1725000006845,
+      "answer_text": "According to the excerpts, designs must satisfy the following conditions for Design Manager to reuse a mesh from a previous design:\n\n1. **Same Geometry and Meshing parameters**: Designs must share the same Geometry and Meshing parameters.\n\n2. **Qualifying study type**: The design study must be one of the following types that permit mesh caching and reuse:\n   - Sweep (2 Level and 3 Level only)\n   - DOE (2 Level and 3 Level only)\n   - Manual\n\nAs stated in excerpt [1]: \"In addition, designs must share the same Geometry and Meshing parameters. When these conditions apply, a design that qualifies need only run the Solver Block and Result Block as it can reuse the mesh from a previous design.\""
+    },
+    {
+      "question_id": "q12-pie-chart",
+      "judge_score": 2,
+      "judge_reason": "The system answer correctly describes the pie chart's purpose and creation methods matching the reference, but adds an unverified claim about showing distribution of success/error/running cases, which is a minor embellishment not in the reference.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 4673.888792000071,
+      "answer_text": "# Design Manager Pie Chart\n\n## What It Shows\n\nAccording to the excerpts, a Design Manager pie chart displays **design feasibility** - a qualitative overview of how well the output of a design study fits with the constraints, responses, and bounding parameters that have been set during the study run. The pie chart shows the distribution of design cases by status, such as successful, error, and running cases as percentages of the total design study results.\n\n## How to Create One\n\nThere are two methods:\n\n**For a design study that has not yet been selected:**\n1. Right-click the Plots node and select New Plot > Pie Chart (or use the toolbar)\n2. In the Pie Chart Plot Setup dialog, set the Design Study property\n3. Right-click Plots > [Pie Chart] node and select Add Data\n4. Select the required design study and press OK\n\n**For an existing design study that has already run:**\n1. Right-click Design Studies > [Design Study] and select Create Plot > Pie Chart\n2. Set the properties for the pie chart plot\n\nAlternatively, you can use the workflow \"Creating Design Plots\" to create a pre-populated pie chart."
+    },
+    {
+      "question_id": "q13-adjoint-cost-function",
+      "judge_score": 1,
+      "judge_reason": "The verification method matches, but the study type is misidentified as 'gradient-based SQP optimization' rather than the correct 'adjoint-based design study'.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 3620.0007500010543,
+      "answer_text": "Based on the excerpts provided:\n\n**Study Type:** A **gradient-based optimization study using the Sequential Quadratic Programming (SQP) method** requires responses associated with an adjoint cost function.\n\n**How to Verify the Requirement is Met:**\n\nAccording to excerpt [1], to verify this requirement, you should \"check whether the Adjoint Cost Function property is activated.\"\n\nSpecifically, the excerpts indicate that:\n- The response (such as dP) must have the **Adjoint Cost Function property checked** (enabled)\n- The corresponding input parameters must have the **Sensitivity property activated**\n- These two settings are interdependent and critical for the SQP-based gradient optimization to function properly\n\nAs stated in excerpt [2], the red borders highlighting these settings \"emphasize that these two settings are interdependent and crucial for gradient-based SQP optimization.\""
+    },
+    {
+      "question_id": "q14-vr-console-install",
+      "judge_score": 3,
+      "judge_reason": "The system answer correctly identifies -i console for console mode and -DINSTALLDIR=<path> for custom install location, matching the reference answer fully.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 3284.5270840043668,
+      "answer_text": "Based on the excerpts provided:\n\n**To install in console mode:** Use the `-i console` option, which runs the installer in console mode and installs Simcenter STAR-CCM+ Virtual Reality with the default settings.\n\n**To choose a different install location:** Use the `-DINSTALLDIR=<path>` option to provide an alternative location for the installation.\n\nSo a command combining both would look like:\n```\ninstaller.exe -i console -DINSTALLDIR=<path>\n```\n\nNote that when using console mode, you are required to accept the license agreement and choose the installation location in the console window."
+    },
+    {
+      "question_id": "q15-vr-workflow",
+      "judge_score": 2,
+      "judge_reason": "The system answer captures the core steps (prepare scenes, launch VR) but omits the reference's note about two distinct usage modes with differing steps, simplifying the process.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 2416.019458003575,
+      "answer_text": "According to the excerpts, the steps to visualize results in Simcenter STAR-CCM+ Virtual Reality are:\n\n1. Prepare scenes in Simcenter STAR-CCM+.\n2. Launch Simcenter STAR-CCM+ Virtual Reality and load scenes.\n3. Explore the virtual scene."
+    },
+    {
+      "question_id": "q16-help-navigation",
+      "judge_score": 2,
+      "judge_reason": "Correctly identifies clicking Next and that it differs from the browser's Next button, but omits mention of the Previous button and unnecessarily adds that details of the difference are unavailable.",
+      "keyword_coverage": 1.0,
+      "cited_correct_source": true,
+      "latency_ms": 2631.1893750025774,
+      "answer_text": "According to the excerpts, to move to the next page in the online Help, you click the (Next) button. \n\nThe key difference is that this (Next) button is **not the same as the Next button in the browser**. The excerpt states: \"This button is not the same as the Next button in the browser.\"\n\nHowever, the excerpts do not provide specific details about how the functionality of these two buttons differs from each other."
+    }
+  ]
+}
