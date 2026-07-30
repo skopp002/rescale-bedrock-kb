@@ -16,19 +16,21 @@ knowledge base type — AWS owns the vector store, chunking, embeddings, and par
 
 ## Results
 
-16 questions, `k=5`. Full per-question detail in `results/*.json`.
+20 questions (16 text + 4 figure), `k=5`. Full per-question detail in `results/*.json`.
 
 | metric | titan | nova | managed |
 |---|---|---|---|
 | recall@5 | 1.0 | 1.0 | 1.0 |
-| precision@5 | 0.825 | **0.900** | 0.850 |
-| MRR | 0.9688 | **1.0** | 0.9688 |
-| hit@1 | 0.9375 | **1.0** | 0.9375 |
-| answer_correctness | 0.7917 | 0.7917 | 0.7917 |
-| keyword_coverage | 0.9688 | 0.9688 | **1.0** |
-| citation_precision | 1.0 | 1.0 | 1.0 |
-| retrieve latency p50 | **619 ms** | 851 ms | 808 ms |
-| RAG latency p50 | 3254 ms | 3303 ms | **2798 ms** |
+| precision@5 | 0.86 | **0.92** | 0.88 |
+| MRR | 0.975 | **1.0** | 0.975 |
+| hit@1 | 0.95 | **1.0** | 0.95 |
+| answer_correctness | 0.7167 | **0.7667** | 0.7167 |
+| keyword_coverage | 0.88 | 0.8833 | **0.9517** |
+| citation_precision | 0.95 | **1.0** | **1.0** |
+| retrieve latency p50 | **711 ms** | 962 ms | 748 ms |
+| RAG latency p50 | 3318 ms | 3334 ms | **2884 ms** |
+| recall (figure questions) | 1.0 | 1.0 | 1.0 |
+| recall (text questions) | 1.0 | 1.0 | 1.0 |
 
 Read these with the caveats attached:
 
@@ -36,15 +38,14 @@ Read these with the caveats attached:
   systems are equal.** With five chapters indexed and questions written against
   known page ranges, finding *something* relevant in the top 5 is easy. Ranking
   quality (MRR, hit@1) still separates them, and that's where Nova wins: it put a
-  correct chunk first on all 16 questions.
-- **`answer_correctness` being identical at 0.7917 is a coincidence, not a bug.**
-  Per-question judge scores differ (`titan` 3,2,3,3,2,… vs `nova` 3,3,3,3,2,…);
-  all three happen to total 38/48. Verify with
-  `jq '[.answers[].judge_score]' results/*.json`.
-- **No figure/table questions are in the eval set yet**, so `recall_by_kind`
-  reports only `text`. That is exactly the axis on which a multimodal embedder
-  should separate from a text-only one, so the Nova-vs-Titan comparison is
-  currently incomplete — the gap is in the eval set, not the pipeline.
+  correct chunk first on all 20 questions.
+- **Nova now leads on `answer_correctness` (0.7667 vs 0.7167).** The 4 figure
+  questions — which require the KB to have correctly parsed diagram content —
+  begin to separate the multimodal embedder from the text-only one. More
+  figure/table questions should widen this gap.
+- **Figure question recall is still saturated at 1.0** because all diagrams come
+  from chapters already in the index. The differentiation shows up in answer
+  quality and keyword coverage instead.
 - The corpus is a **539-page subset** (5 chapters) of the 14,125-page guide.
 
 ## Why the PDF is split
