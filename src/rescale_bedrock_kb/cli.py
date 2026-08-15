@@ -101,7 +101,9 @@ def upload(
 ):
     """Upload the split PDFs (plus metadata sidecars) to S3."""
     parts = split_mod.load_manifest()
-    # One bucket per region -- an ingestion job can't read cross-region.
+    # Every experiment shares aws.primary_region, so this resolves to one bucket
+    # -- an ingestion job can't read cross-region, so a second region would mean
+    # a second copy of the corpus. The comprehension still validates each key.
     regions = {experiment(k).region for k in _experiment_keys(experiment_keys)}
     for region in sorted(regions):
         bucket = upload_mod.bucket_name(region)
@@ -164,7 +166,12 @@ def status():
         exp = experiment(key)
         job = "-"
         kb_id, ds_id = entry.get("knowledge_base_id"), entry.get("data_source_id")
-        if kb_id and ds_id:
+        recorded = entry.get("region")
+        if recorded and recorded != exp.region:
+            # A knowledge base id is region-scoped, so querying this one would
+            # raise a bare ResourceNotFoundException that never names the cause.
+            job = f"[red]built in {recorded}, aws.primary_region is now {exp.region}[/]\nre-run `provision {key}`"
+        elif kb_id and ds_id:
             try:
                 latest = ingest_mod.latest_job(exp, kb_id, ds_id)
                 job = f"{latest.status}\n{latest.summary()}" if latest else "none"

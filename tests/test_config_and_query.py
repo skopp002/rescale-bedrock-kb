@@ -32,11 +32,56 @@ def part():
 # --- experiment definitions --------------------------------------------------
 
 
-def test_nova_experiment_pinned_to_us_east_1():
-    """Nova multimodal embeddings exist only in us-east-1; pinning it wrong
-    would fail at CreateKnowledgeBase."""
-    assert EXPERIMENTS["nova"].region == "us-east-1"
+def test_every_experiment_shares_one_region():
+    """A per-experiment region would mean a second copy of the corpus and a
+    second FM-parsing bill, since an ingestion job cannot read cross-region."""
+    assert {exp.region for exp in EXPERIMENTS.values()} == {config.PRIMARY_REGION}
+
+
+def test_primary_region_supports_the_nova_embedder():
+    """Nova multimodal embeddings exist only in us-east-1, which is why that is
+    the shared region. Naming the model without the region would fail at
+    CreateKnowledgeBase."""
     assert "nova-2-multimodal-embeddings" in EXPERIMENTS["nova"].embedding_model
+    assert config.PRIMARY_REGION == "us-east-1"
+
+
+def test_resolve_rejects_state_from_another_region(monkeypatch):
+    """A knowledge base id is region-scoped, so state written before
+    aws.primary_region changed points at a KB that does not exist in the region
+    every client is now built for. Without this guard the next call fails with a
+    bare ResourceNotFoundException that never mentions the region.
+    """
+    from rescale_bedrock_kb import provision
+
+    monkeypatch.setattr(
+        provision,
+        "get_state",
+        lambda key: {
+            "region": "eu-west-1",
+            "knowledge_base_id": "ABC123",
+            "data_source_id": "DEF456",
+        },
+    )
+    with pytest.raises(SystemExit) as exc:
+        provision.resolve(EXPERIMENTS["titan"])
+    assert "eu-west-1" in str(exc.value)
+    assert config.PRIMARY_REGION in str(exc.value)
+
+
+def test_resolve_accepts_state_from_the_current_region(monkeypatch):
+    from rescale_bedrock_kb import provision
+
+    monkeypatch.setattr(
+        provision,
+        "get_state",
+        lambda key: {
+            "region": config.PRIMARY_REGION,
+            "knowledge_base_id": "ABC123",
+            "data_source_id": "DEF456",
+        },
+    )
+    assert provision.resolve(EXPERIMENTS["titan"]) == ("ABC123", "DEF456")
 
 
 def test_vector_experiments_use_fm_parser():
@@ -118,6 +163,32 @@ def test_missing_key_raises_config_error(tmp_path):
     assert proc.returncode != 0
     assert "ConfigError" in proc.stderr
     assert "missing required key 'aws.account_id'" in proc.stderr
+
+
+def test_per_experiment_region_is_rejected_not_ignored(tmp_path):
+    """A stale `region:` in an experiment block must fail, not be silently
+    dropped -- reading as though it were in force is the failure mode the strict
+    loader exists to prevent. Subprocess for the same reason as above.
+    """
+    import subprocess
+    import sys
+
+    import yaml
+
+    raw = yaml.safe_load(config.CONFIG_PATH.read_text())
+    raw["experiments"]["titan"]["region"] = "us-west-2"
+    stale = tmp_path / "config.yaml"
+    stale.write_text(yaml.safe_dump(raw))
+
+    proc = subprocess.run(
+        [sys.executable, "-c", "import rescale_bedrock_kb.config"],
+        env={**os.environ, "KB_CONFIG": str(stale)},
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert proc.returncode != 0
+    assert "'experiments.titan.region' is not a valid key" in proc.stderr
 
 
 # --- upload metadata ---------------------------------------------------------

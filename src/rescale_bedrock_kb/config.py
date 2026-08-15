@@ -74,6 +74,11 @@ def _path(*keys: str) -> Path:
 
 
 # --- aws ---------------------------------------------------------------------
+# The region for every experiment. Single-valued on purpose: an ingestion job
+# cannot read a cross-region corpus bucket, so two regions means two copies of
+# the corpus and two FM-parsing bills. `Experiment.region` reads this rather than
+# a per-experiment key, which makes the split unrepresentable instead of merely
+# discouraged -- see the rejection of `experiments.<key>.region` below.
 PRIMARY_REGION: str = _require("aws", "primary_region")
 ACCOUNT_ID: str | None = _require("aws", "account_id", allow_null=True)
 PROJECT: str = _require("aws", "project_prefix")
@@ -110,6 +115,12 @@ CHUNK_MAX_TOKENS: int = _require("chunking", "max_tokens")
 CHUNK_OVERLAP_PCT: int = _require("chunking", "overlap_percentage")
 
 # --- models ------------------------------------------------------------------
+# Prefixes that mark a model id as a cross-region inference profile rather than
+# an on-demand foundation model. They resolve to a different ARN resource type
+# (`inference-profile/` not `foundation-model/`), so a missing prefix here builds
+# a malformed ARN. `jp.` (Tokyo) and `apac.` are easy to forget.
+INFERENCE_PROFILE_PREFIXES: tuple[str, ...] = ("us.", "eu.", "jp.", "apac.", "global.")
+
 FM_PARSER_MODEL: str = _require("models", "fm_parser")
 GENERATION_MODEL: str = _require("models", "generation")
 JUDGE_MODEL: str = _require("models", "judge")
@@ -169,12 +180,14 @@ class Experiment:
                      chunking and BEDROCK_FOUNDATION_MODEL parsing.
       - "MANAGED" -> Bedrock Managed Knowledge Base: AWS owns the vector store,
                      chunking, embeddings, and parsing (SMART_PARSING).
+
+    There is no `region` field: every experiment runs in `aws.primary_region`.
+    See the `region` property.
     """
 
     key: str
     label: str
     kb_type: str
-    region: str
     parsing_strategy: str
     uses_s3_vectors: bool
     notes: str
@@ -185,6 +198,18 @@ class Experiment:
     parser_model: str | None
     connector_version: str | None
     image_extraction: str | None
+
+    @property
+    def region(self) -> str:
+        """Always `aws.primary_region`.
+
+        Kept as a property rather than dropped so every call site still reads
+        `exp.region` -- the region is genuinely a property of an experiment, it
+        just isn't independently chosen. Every experiment sharing one region is
+        what lets them share one corpus bucket, and therefore one FM-parsing
+        bill, since an ingestion job cannot read across regions.
+        """
+        return PRIMARY_REGION
 
     @property
     def kb_name(self) -> str:
@@ -228,6 +253,17 @@ def _build_experiment(key: str, spec: dict[str, Any]) -> Experiment:
             raise ConfigError(f"{CONFIG_PATH}: 'experiments.{key}.{name}' must be set")
         return value
 
+    # Rejected rather than ignored. A stale `region:` left in an experiment block
+    # would otherwise read as though it were in force, which is exactly the kind
+    # of silently-wrong configuration this module exists to prevent.
+    if "region" in spec:
+        raise ConfigError(
+            f"{CONFIG_PATH}: 'experiments.{key}.region' is not a valid key. Every "
+            f"experiment runs in aws.primary_region ({PRIMARY_REGION}); a "
+            f"per-experiment region would need its own copy of the corpus, "
+            f"because an ingestion job cannot read cross-region."
+        )
+
     kb_type = field("kb_type", required=True)
     if kb_type not in _VALID_KB_TYPES:
         raise ConfigError(
@@ -242,7 +278,6 @@ def _build_experiment(key: str, spec: dict[str, Any]) -> Experiment:
         key=key,
         label=field("label", required=True),
         kb_type=kb_type,
-        region=field("region", required=True),
         parsing_strategy=field("parsing_strategy", required=True),
         uses_s3_vectors=field("uses_s3_vectors", required=True),
         notes=field("notes", required=True),

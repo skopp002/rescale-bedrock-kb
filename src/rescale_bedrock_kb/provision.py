@@ -48,7 +48,15 @@ def _inline_policy(exp: Experiment, corpus_bucket: str) -> dict:
         {
             "Sid": "InvokeModels",
             "Effect": "Allow",
-            "Action": ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"],
+            "Action": [
+                "bedrock:InvokeModel",
+                "bedrock:InvokeModelWithResponseStream",
+                # Required when the FM parser is an inference profile rather than
+                # an on-demand model: CreateDataSource resolves the profile and
+                # fails with "Not authorized to call GetInferenceProfile"
+                # without this, even though InvokeModel is already granted.
+                "bedrock:GetInferenceProfile",
+            ],
             "Resource": [
                 f"arn:aws:bedrock:{exp.region}::foundation-model/*",
                 f"arn:aws:bedrock:{exp.region}:{acct}:inference-profile/*",
@@ -428,4 +436,19 @@ def resolve(exp: Experiment) -> tuple[str, str]:
     kb_id, ds_id = state.get("knowledge_base_id"), state.get("data_source_id")
     if not kb_id or not ds_id:
         raise SystemExit(f"Experiment {exp.key!r} is not provisioned. Run `provision {exp.key}`.")
+
+    # A knowledge base id is region-scoped, so state written before
+    # aws.primary_region changed points at a KB that does not exist in the region
+    # every client is now built for. Without this the next call fails with a bare
+    # ResourceNotFoundException that says nothing about the region being the cause.
+    recorded = state.get("region")
+    if recorded and recorded != exp.region:
+        raise SystemExit(
+            f"Experiment {exp.key!r} was provisioned in {recorded} but "
+            f"aws.primary_region is now {exp.region}. A knowledge base id is "
+            f"region-scoped, so {kb_id} does not exist there. Run "
+            f"`upload {exp.key}` and `provision {exp.key}` to rebuild it in "
+            f"{exp.region} (the {recorded} resources are left untouched), then "
+            f"`ingest {exp.key}` -- which re-parses and re-embeds the corpus."
+        )
     return kb_id, ds_id

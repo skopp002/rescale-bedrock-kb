@@ -1,0 +1,34 @@
+# Copy to terraform.tfvars and edit. Every value here has a working default;
+# this file exists to document the choices, not because anything is missing.
+#
+# What to build is NOT here -- it is in config/config.yaml, which this module
+# reads directly.
+
+# Namespaces this stack apart from the one `kb provision` built. The default "tf"
+# gives starccm-kb-tf-* alongside starccm-kb-*, so the two cannot collide.
+#
+# Setting this to "" makes Terraform claim the Python stack's names, which will
+# fail with EntityAlreadyExists / BucketAlreadyOwnedByYou unless those resources
+# are gone or imported first.
+# name_suffix = "tf"
+
+# Which experiments from config.yaml to build. Omit to use default_experiments
+# (titan, managed); ["all"] adds nova in us-east-1.
+#
+# Cost note: titan and nova each FM-parse the whole corpus on first ingest, which
+# is the largest single cost in this project. managed parses too, on AWS's side.
+# experiments = ["all"]
+
+# Upload the split PDFs and metadata sidecars, replacing `kb upload`. Requires
+# `uv run kb split` to have run first.
+# manage_corpus_objects = true
+
+# Wait between writing the KB role policy and creating the knowledge base.
+# Raise this if the first apply fails with a ValidationException about the role's
+# S3 access -- that is IAM eventual consistency, and a re-apply also fixes it.
+# iam_propagation_delay = "25s"
+
+# Let `terraform destroy` delete non-empty buckets and populated vector indexes.
+# Leave false unless you mean it: destroying the vector store means paying to
+# re-embed, and re-ingesting means paying to FM-parse the corpus again.
+# force_destroy = false

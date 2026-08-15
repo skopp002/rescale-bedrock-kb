@@ -4,15 +4,22 @@ Builds three Amazon Bedrock knowledge bases over the same corpus — the Simcent
 STAR-CCM+ user guide — and scores them against one hand-authored eval set, so the
 only variable between them is the knowledge base itself.
 
-| key | knowledge base | vector store | embeddings | parsing | region |
-|---|---|---|---|---|---|
-| `titan` | Bedrock KB (`VECTOR`) | S3 Vectors (ours) | Titan Text v2, 1024-d | FM parser, `MULTIMODAL` | us-west-2 |
-| `nova` | Bedrock KB (`VECTOR`) | S3 Vectors (ours) | Nova 2 multimodal, 1024-d | FM parser, `MULTIMODAL` | us-east-1 |
-| `managed` | Bedrock **Managed** KB | AWS-owned | AWS-selected | `SMART_PARSING` | us-west-2 |
+| key | knowledge base | vector store | embeddings | parsing |
+|---|---|---|---|---|
+| `titan` | Bedrock KB (`VECTOR`) | S3 Vectors (ours) | Titan Text v2, 1024-d | FM parser, `MULTIMODAL` |
+| `nova` | Bedrock KB (`VECTOR`) | S3 Vectors (ours) | Nova 2 multimodal, 1024-d | FM parser, `MULTIMODAL` |
+| `managed` | Bedrock **Managed** KB | AWS-owned | AWS-selected | `SMART_PARSING` |
 
 `titan` and `nova` are the same knowledge base differing only in embedding model,
 which isolates what a multimodal embedder buys you. `managed` is the second
 knowledge base type — AWS owns the vector store, chunking, embeddings, and parser.
+
+All three run in **one region**, and there is no per-experiment region to set. The
+region is us-east-1 because `amazon.nova-2-multimodal-embeddings-v1:0` exists only
+there, and that model is the whole point of the `nova` experiment. Sharing a
+region is what lets all three share one corpus bucket: an ingestion job cannot
+read cross-region, so a split region means a second copy of the corpus and a
+second FM-parsing bill over the same PDFs.
 
 ## Results
 
@@ -100,12 +107,23 @@ original guide: `Design Manager (guide pp. 7763-7997)`.
 `config/config.yaml` is the single source of truth. **There are no defaults
 anywhere in the code** — a missing, null, or empty value raises `ConfigError` at
 import time rather than falling back to something plausible, so an experiment
-can't run under settings nobody stated. Two rules are enforced structurally:
+can't run under settings nobody stated. Three rules are enforced structurally:
 
 - `models.judge` **must differ** from `models.generation`. A model grading its
   own answers reports its own blind spots as correct.
+- **Every experiment runs in `aws.primary_region`.** There is no
+  `experiments.<key>.region`, and leaving one in place raises `ConfigError`
+  rather than being ignored — a stale region reads as though it were in force.
+  `Experiment.region` is a property returning `PRIMARY_REGION`, so the split is
+  unrepresentable rather than merely discouraged.
 - `aws.account_id` is the only key permitted to be null, because STS can
   discover it.
+
+Changing `aws.primary_region` means rebuilding: a knowledge base id is
+region-scoped, so `provision.resolve()` refuses state recorded under a different
+region and tells you to re-provision rather than failing later with a bare
+`ResourceNotFoundException`. Resources in the old region are left untouched, and
+re-ingesting re-parses and re-embeds the corpus.
 
 Point `KB_CONFIG` at another file to use a different config.
 
@@ -201,8 +219,14 @@ Things that cost real debugging time:
 - **Claude 4.6+ rejects `temperature`** with a `ValidationException`. Hence
   `inference.<role>.temperature: null` meaning "omit the key".
 - **`amazon.nova-lite-v1:0` is the FM parser** because it's the cheapest current
-  vision model in us-west-2 still supporting `ON_DEMAND` — newer ones are
+  vision model in us-east-1 still supporting `ON_DEMAND` — newer ones are
   `INFERENCE_PROFILE`-only and need a profile ARN.
+- **Nothing in us-west-2 can stand in for Nova 2 multimodal embeddings.**
+  `cohere.embed-v4:0` is `INFERENCE_PROFILE`-only there and
+  `amazon.titan-embed-image-v1` is not a Nova-class embedder, so consolidating on
+  us-west-2 instead would have changed what the `titan`-vs-`nova` comparison
+  measures. us-east-1 has everything: the Nova embedder, Titan Text v2,
+  `nova-lite`, S3 Vectors, and Managed KBs.
 
 ## Layout
 
@@ -211,6 +235,7 @@ config/config.yaml    every setting; no defaults in code
 data/                 source PDF + data/split/ (gitignored)
 evals/questions.json  16 ground-truth questions
 results/              per-experiment eval reports
+terraform/            declarative build of upload + provision (see terraform/README.md)
 src/rescale_bedrock_kb/
   config.py           strict YAML loader
   split.py            outline-aware PDF splitting
@@ -220,8 +245,34 @@ src/rescale_bedrock_kb/
   query.py            retrieve / retrieve-and-generate
   evaluate.py         metrics + LLM judge
   cli.py              typer commands
-tests/                35 tests, no AWS calls
+tests/                42 tests, no AWS calls
 ```
+
+## The same stack in Terraform
+
+`terraform/` builds all three experiments declaratively, replacing `kb upload` and
+`kb provision`. It reads this same `config/config.yaml` — nothing is duplicated
+and nothing is defaulted, so a missing key fails the plan rather than the import.
+
+It stands *beside* the Python stack rather than replacing it: resources are named
+`starccm-kb-tf-*`, so both can exist in the account at once.
+
+Everything needed exists in the AWS provider, gated on **6.56.0** — the release
+that added the Managed Knowledge Base type and the managed connector data source.
+The single-region rule holds there too, and structurally: no resource carries a
+`region` argument, so the one provider block is the only place a region is
+stated, and a leftover `experiments.<key>.region` fails the plan.
+
+**The gap is ingestion.** There is no `StartIngestionJob` resource, so Terraform
+can build every resource but cannot make a knowledge base queryable — the same
+class of gap as "nothing in CloudFormation can execute SQL" below. `apply` emits a
+`kb-state.json` in the Python stack's own format plus a derived config, so
+`KB_CONFIG=terraform/config.tf.yaml uv run kb ingest` picks up from there with no
+changes to the Python code. `kb split` also stays in Python; Terraform consumes
+its manifest.
+
+Details, the two behavioural differences from `provision.py`, and the cost caveat
+are in [`terraform/README.md`](terraform/README.md).
 
 ## Next
 

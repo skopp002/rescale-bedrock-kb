@@ -8,8 +8,17 @@
 # Paths are relative to the repository root.
 
 aws:
-  # Region for everything except experiments that override it explicitly.
-  primary_region: us-west-2
+  # The region for *every* experiment. There is deliberately no per-experiment
+  # override: an ingestion job cannot read a cross-region corpus bucket, so a
+  # split region means a second copy of the corpus and a second FM-parsing bill,
+  # and it is easy to introduce by accident. `experiments.<key>.region` is
+  # rejected as an unknown key rather than silently ignored.
+  #
+  # us-east-1 and not us-west-2 because `amazon.nova-2-multimodal-embeddings-v1:0`
+  # exists only there, and that model is the entire point of the `nova`
+  # experiment. Everything else this project needs supports ON_DEMAND invocation
+  # in us-east-1 too, and Bedrock Managed KBs are available there.
+  primary_region: us-east-1
   # Leave account_id null to resolve it via STS at runtime. It is the one value
   # allowed to be null, because it is discoverable and must match the caller.
   account_id: null
@@ -64,9 +73,9 @@ chunking:
 models:
   # Foundation-model parser. FM parsing bills on input/output tokens (only
   # Bedrock Data Automation is per-page), so the cheapest vision-capable model
-  # is the economical choice. nova-lite is the one current vision model in
-  # us-west-2 that still supports ON_DEMAND invocation -- newer ones are
-  # INFERENCE_PROFILE-only and need a profile ARN instead.
+  # is the economical choice. nova-lite is the cheapest current vision model
+  # that still supports ON_DEMAND invocation in `aws.primary_region` -- newer
+  # ones are INFERENCE_PROFILE-only and need a profile ARN instead.
   fm_parser: amazon.nova-lite-v1:0
   # Answers questions from retrieved context.
   generation: us.anthropic.claude-haiku-4-5-20251001-v1:0
@@ -106,11 +115,11 @@ default_experiments:
   - titan
   - managed
 
+# Every experiment runs in `aws.primary_region`; none of them names a region.
 experiments:
   titan:
     label: Bedrock KB / Titan v2 text + FM parser
     kb_type: VECTOR
-    region: us-west-2
     embedding_model: amazon.titan-embed-text-v2:0
     embedding_dims: 1024
     embedding_data_type: FLOAT32
@@ -124,8 +133,6 @@ experiments:
   nova:
     label: Bedrock KB / Nova 2 multimodal embed + FM parser
     kb_type: VECTOR
-    # Pinned: amazon.nova-2-multimodal-embeddings-v1:0 exists only here.
-    region: us-east-1
     embedding_model: amazon.nova-2-multimodal-embeddings-v1:0
     embedding_dims: 1024
     embedding_data_type: FLOAT32
@@ -133,13 +140,13 @@ experiments:
     parsing_modality: MULTIMODAL
     uses_s3_vectors: true
     notes: >-
-      Nova multimodal embeddings are us-east-1 only, hence the separate region
-      and corpus bucket.
+      Same knowledge base as titan, differing only in embedding model, which
+      isolates what a multimodal embedder buys you. This model exists only in
+      us-east-1, which is why aws.primary_region is us-east-1.
 
   managed:
     label: Bedrock Managed KB (AWS-managed embed + Smart Parsing)
     kb_type: MANAGED
-    region: us-west-2
     # AWS selects and manages the embedder, so no model or dimensions here.
     embedding_model: null
     embedding_dims: null

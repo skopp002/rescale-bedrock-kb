@@ -78,7 +78,7 @@ def model_arn(model_id: str, region: str) -> str:
     different resource type than on-demand foundation models.
     """
     acct = account_id()
-    if model_id.startswith(("us.", "eu.", "apac.", "global.")):
+    if model_id.startswith(config.INFERENCE_PROFILE_PREFIXES):
         return f"arn:aws:bedrock:{region}:{acct}:inference-profile/{model_id}"
     return f"arn:aws:bedrock:{region}::foundation-model/{model_id}"
 
